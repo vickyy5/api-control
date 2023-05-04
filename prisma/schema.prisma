@@ -29,7 +29,7 @@ model User {
 }
 
 model Work {
-  id                String       @id @default(uuid())
+  id                String         @id @default(uuid())
   name              String
   location          String
   contratist        String
@@ -37,8 +37,7 @@ model Work {
   financialProgress Int
   physicalProgress  Int
   users             User[]
-  frontProjectId    String
-  frontProject      FrontProject @relation(fields: [frontProjectId], references: [id])
+  fronProject       FrontProject[]
 }
 
 model Contratist {
@@ -67,7 +66,8 @@ model FrontProject {
   report       Report       @relation(fields: [reportId], references: [id])
   multimediaId String
   multimedia   Multimedia   @relation(fields: [multimediaId], references: [id])
-  Work         Work[]
+  Work         Work       @relation(fields: [workId], references: [id])
+  workId       String
 }
 
 model Estimations {
