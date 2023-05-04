@@ -42,6 +42,20 @@ export const updateWork = async (req,res) => {
     res.json({data: updated})
 }
 
+export const createWork = async (req,res) => {
+    const created = await prisma.work.create({
+        data:{
+            name: req.body.name,
+            location: req.body.location,
+            contratist: req.body.contratist,
+            projects: req.body.projects,
+            financialProgress: req.body.financialProgress,
+            physicalProgress: req.body.physicalProgress
+        }
+    })
+    
+    res.json({data: created})
+}
 
 export const deleteWork = async (req,res) => {
     const deleted = await prisma.work.delete({
@@ -52,3 +66,8 @@ export const deleteWork = async (req,res) => {
 
     res.json({data: deleted})
 }
+
+
+//export const addUserToWork = async (req, res) => {
+    
+//}
