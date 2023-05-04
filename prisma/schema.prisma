@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ROLS {
+  Contratante
+  Contratista
+  Supervisor
+  Representante_Legal
+  Directivo
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  lastname String
+  username String @unique
+  password String
+  role     ROLS   @default(Contratante)
+  works    Work[]
+}
+
+model Work {
+  id                String       @id @default(uuid())
+  name              String
+  location          String
+  contratist        String
+  projects          String
+  financialProgress Int
+  physicalProgress  Int
+  users             User[]
+  frontProjectId    String
+  frontProject      FrontProject @relation(fields: [frontProjectId], references: [id])
+}
+
+model Contratist {
+  id       String @id @default(uuid())
+  company  String
+  workerId String
+  worker   Worker @relation(fields: [workerId], references: [id])
+}
+
+model Worker {
+  id         String       @id @default(uuid())
+  name       String
+  lastname   String
+  role       ROLS
+  username   String
+  Contratist Contratist[]
+}
+
+model FrontProject {
+  id           String       @id @default(uuid())
+  name         String
+  contract     String
+  minutas      String
+  estimations  Estimations?
+  reportId     String
+  report       Report       @relation(fields: [reportId], references: [id])
+  multimediaId String
+  multimedia   Multimedia   @relation(fields: [multimediaId], references: [id])
+  Work         Work[]
+}
+
+model Estimations {
+  id             String       @id @default(uuid())
+  name           String
+  date           DateTime
+  url            String
+  frontProjectId String       @unique
+  frontProject   FrontProject @relation(fields: [frontProjectId], references: [id])
+}
+
+model Report {
+  id           String         @id @default(uuid())
+  name         String
+  date         DateTime
+  url          String
+  frontProject FrontProject[]
+}
+
+model Multimedia {
+  id           String         @id @default(uuid())
+  name         String
+  date         DateTime
+  url          String
+  path         String
+  FrontProject FrontProject[]
+}
