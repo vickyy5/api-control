@@ -5,8 +5,12 @@ export const getWorks = async (req,res) => {
     const works = await prisma.user.findUnique({
         where: {
             id: req.user.id
-        }, include: {
-            works: true
+        }, select: {
+            name: false,
+            lastname: false,
+            username: false,
+            password: false,
+            works:true
         }
     })
 
