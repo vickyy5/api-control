@@ -30,18 +30,14 @@ export const login = async (req,res) => {
 
 
     try {
-    
         const isValid = await comparePasswords(req.body.password, user.password)
-
         if (!isValid || isValid === null){
             res.status(401)
             res.json({message:'Incorret Username or Password'})
             return      
         }
-
         const token = createJWT(user)    
         res.json({token: token})
-        
     } catch {
         res.status(401)
         res.json({message:'Incorret Username or Password'})
