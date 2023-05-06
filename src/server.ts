@@ -1,5 +1,5 @@
 import express from 'express'
-import { login, pong } from './handlers/user'
+import { createNewUser, login, pong } from './handlers/user'
 import { protect } from './modules/auth'
 //import morgan from 'morgan'
 import router from './router'
@@ -14,6 +14,7 @@ app.use("/ping", pong)
 
 app.use("/api",protect,router)
 
+app.use("/admin/user",protect,createNewUser)
 
 app.post("/login", login)
 
