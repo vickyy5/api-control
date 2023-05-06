@@ -11,9 +11,9 @@ export const createNewUser = async (req, res) => {
             role: req.body.role
         }
     })
-
+    //agregar manejo de errores jeje
     //const token = createJWT(user)
-    res.json({token: "User Created :)"})
+    res.json({token: "Usuario Creado :)"})
 }
 
 
@@ -33,14 +33,14 @@ export const login = async (req,res) => {
         const isValid = await comparePasswords(req.body.password, user.password)
         if (!isValid || isValid === null){
             res.status(401)
-            res.json({message:'Incorret Username or Password'})
+            res.json({message:'Usuario o Contraseña incorrectos'})
             return      
         }
         const token = createJWT(user)    
-        res.json({token: token})
+        res.json({token: token, data: user})
     } catch {
         res.status(401)
-        res.json({message:'Incorret Username or Password'})
+        res.json({message:'Usuario o Contraseña incorrectos'})
     } 
 
 } 
