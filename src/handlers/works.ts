@@ -10,7 +10,7 @@ export const getWorks = async (req,res) => {
             lastname: false,
             username: false,
             password: false,
-            works:true
+            works: true
         }
     })
 
@@ -22,6 +22,8 @@ export const getOneWork = async (req,res) => {
     const work = await prisma.work.findUnique({
         where: {
             id: req.params.id
+        }, include: {
+            users:true
         }       
     })
 
@@ -73,10 +75,76 @@ export const deleteWork = async (req,res) => {
 
 
 export const addUserToWork = async (req, res) => {
-//    const newUser = await prisma.work.update({
-    const users = req.body
+    const usernames = req.body.users
+
+    const cleanUsernames = usernames.map(x => ({username:`${x}`}))
+
+    console.log(cleanUsernames)
+
+    for(const user of usernames){
+        const usersearch = await prisma.user.findUnique({
+            where:{
+                id: user
+            }
+        })
+    
+        if(!user){
+            res.json(400)
+            res.json({error: `El username: ${user}, no se encontro`})
+            return
+        }
+    }
 
 
-  
-    //rom,ram.banco_registros)    
+    const added = await prisma.work.update({
+        where:{
+            id: req.params.id,
+        }, data: {
+            users: {
+                connect: cleanUsernames
+            },
+        }, include: {
+            users: true
+        }
+    })
+
+    res.json({data: added})    
+
+}
+
+
+export const deleteUsersWorks = async (req,res) => {
+    const usernames = req.body.users
+
+    const cleanUsernames = usernames.map(x => ({username:`${x}`}))
+
+    console.log(cleanUsernames)
+
+    for(const user of usernames){
+        const usersearch = await prisma.user.findUnique({
+            where:{
+                id: user
+            }
+        })
+        
+        if(!user){
+            res.status(400)
+            res.json({error: `El username: ${user}, no se encontro`})
+            return
+        }
+    }
+
+    const deleted = await prisma.work.update({
+        where:{
+            id: req.params.id,
+        }, data: {
+            users: {
+                disconnect: cleanUsernames
+            },
+        }, include: {
+            users: true
+        }
+    })
+
+    res.json({data: deleted})
 }

@@ -1,6 +1,6 @@
 import {Router} from 'express'
 import { body, validationResult } from "express-validator";
-import { addUserToWork, createWork, deleteWork, getOneWork, getWorks, updateWork } from './handlers/works';
+import { addUserToWork, createWork, deleteUsersWorks, deleteWork, getOneWork, getWorks, updateWork } from './handlers/works';
 
 const router = Router()
 
@@ -32,7 +32,10 @@ createWork)
 
 router.delete("/works/:id", deleteWork)
 
-router.post("/works/user",addUserToWork)
+router.put("/works/adduser/:id",addUserToWork)
+
+router.put("/works/deleteuser/:id",deleteUsersWorks)
+
 
 
 export default router
