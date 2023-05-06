@@ -1,5 +1,5 @@
 import express from 'express'
-import { createNewUser, login } from './handlers/user'
+import { login, pong } from './handlers/user'
 import { protect } from './modules/auth'
 //import morgan from 'morgan'
 import router from './router'
@@ -10,9 +10,10 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
+app.use("/ping", pong)
+
 app.use("/api",protect,router)
 
-app.post("/user", createNewUser)
 
 app.post("/login", login)
 

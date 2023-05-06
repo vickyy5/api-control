@@ -16,6 +16,7 @@ enum ROLS {
   Supervisor
   Representante_Legal
   Directivo
+  Admin
 }
 
 model User {

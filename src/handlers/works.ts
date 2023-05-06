@@ -72,6 +72,11 @@ export const deleteWork = async (req,res) => {
 }
 
 
-//export const addUserToWork = async (req, res) => {
-    
-//}
+export const addUserToWork = async (req, res) => {
+//    const newUser = await prisma.work.update({
+    const users = req.body
+
+
+  
+    //rom,ram.banco_registros)    
+}
