@@ -23,8 +23,9 @@ export const getOneWork = async (req,res) => {
         where: {
             id: req.params.id
         }, include: {
-            users:true
-        }       
+            users:true,
+            fronProject: true
+        }
     })
 
     res.json({data: work})
@@ -143,6 +144,78 @@ export const deleteUsersWorks = async (req,res) => {
             },
         }, include: {
             users: true
+        }
+    })
+
+    res.json({data: deleted})
+}
+
+
+export const addFrontWork = async (req,res) => {
+    const frontsNames = req.body.fronts 
+    const clearFrontNames = frontsNames.map(x => ({name:`${x}`}))
+
+    for(const front of frontsNames){
+        const frontSearch = await prisma.frontProject.findUnique({
+            where:{
+                id: front
+            }
+        })
+    
+        if(!front){
+            res.json(400)
+            res.json({error: `El FrontProject: ${front}, no se encontro`})
+            return
+        }
+    }
+
+    const added = await prisma.work.update({
+        where: {
+            id: req.params.id
+        }, data :{
+            fronProject:{
+                connect: clearFrontNames
+            }
+        }, include: {
+            fronProject: true
+        } 
+    })
+
+    res.json({data: added})
+}
+
+
+export const deleteFrontWork = async (req,res) => {
+    const frontsNames = req.body.fronts
+
+    
+    const clearFrontNames = frontsNames.map(x => ({name:`${x}`}))
+
+    for(const front of frontsNames){
+        const frontSearch = await prisma.frontProject.findUnique({
+            where:{
+                id: front
+            }
+        })
+    
+        if(!front){
+            res.json(400)
+            res.json({error: `El FrontProject: ${front}, no se encontro`})
+            return
+        }
+    }
+
+
+
+    const deleted = await prisma.work.update({
+        where:{
+            id: req.params.id,
+        }, data: {
+            fronProject: {
+                disconnect: clearFrontNames
+            },
+        }, include: {
+            fronProject: true
         }
     })
 

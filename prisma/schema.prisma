@@ -50,7 +50,7 @@ model Contratist {
 
 model Worker {
   id         String       @id @default(uuid())
-  name       String
+  name       String       @unique
   lastname   String
   role       ROLS
   username   String
@@ -59,22 +59,22 @@ model Worker {
 
 model FrontProject {
   id           String       @id @default(uuid())
-  name         String
+  name         String       @unique
   contract     String
   minutas      String
   estimations  Estimations?
-  reportId     String
-  report       Report       @relation(fields: [reportId], references: [id])
-  multimediaId String
-  multimedia   Multimedia   @relation(fields: [multimediaId], references: [id])
-  Work         Work       @relation(fields: [workId], references: [id])
-  workId       String
+  reportId     String?
+  report       Report?       @relation(fields: [reportId], references: [id])
+  multimediaId String?
+  multimedia   Multimedia?   @relation(fields: [multimediaId], references: [id])
+  Work         Work?       @relation(fields: [workId], references: [id])
+  workId       String?
 }
 
 model Estimations {
   id             String       @id @default(uuid())
   name           String
-  date           DateTime
+  date           DateTime     @default(now())
   url            String
   frontProjectId String       @unique
   frontProject   FrontProject @relation(fields: [frontProjectId], references: [id])

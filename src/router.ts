@@ -1,6 +1,7 @@
 import {Router} from 'express'
 import { body, validationResult } from "express-validator";
-import { addUserToWork, createWork, deleteUsersWorks, deleteWork, getOneWork, getWorks, updateWork } from './handlers/works';
+import { createFront, deleteFront, getFronts, getOneFront } from './handlers/fronts';
+import { addFrontWork, addUserToWork, createWork, deleteFrontWork, deleteUsersWorks, deleteWork, getOneWork, getWorks, updateWork } from './handlers/works';
 
 const router = Router()
 
@@ -35,6 +36,33 @@ router.delete("/works/:id", deleteWork)
 router.put("/works/adduser/:id",addUserToWork)
 
 router.put("/works/deleteuser/:id",deleteUsersWorks)
+
+router.put("/works/addfront/:id", addFrontWork)
+router.put("/works/deletefront/:id", deleteFrontWork)
+
+
+/*
+      Fronts
+*/
+
+router.get("/fronts",getFronts)
+
+router.get("/fronts/:id",getOneFront)
+
+router.put("/fronts/:id")
+
+router.post("/fronts",
+      body('name').exists().isString(),
+      body('contract').exists().isString(),
+      body('minutas').exists().isString(),
+createFront)
+
+router.delete("/fronts/:id", deleteFront)
+
+
+/*
+      Estimaciones
+*/
 
 
 
