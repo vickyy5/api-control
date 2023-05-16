@@ -1,6 +1,7 @@
 import {Router} from 'express'
 import { body, validationResult } from "express-validator";
-import { createFront, deleteFront, getFronts, getOneFront } from './handlers/fronts';
+import { deleteEstim } from './handlers/estimation';
+import { createFront, deleteFront, estimToFront, getFronts, getOneFront } from './handlers/fronts';
 import { addFrontWork, addUserToWork, createWork, deleteFrontWork, deleteUsersWorks, deleteWork, getOneWork, getWorks, updateWork } from './handlers/works';
 
 const router = Router()
@@ -59,10 +60,14 @@ createFront)
 
 router.delete("/fronts/:id", deleteFront)
 
+router.post("/fronts/estim/:id",estimToFront)
+
 
 /*
       Estimaciones
 */
+
+router.delete("/estims/:id",deleteEstim)
 
 
 

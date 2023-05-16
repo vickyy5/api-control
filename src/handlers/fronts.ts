@@ -95,7 +95,7 @@ export const estimToFront = async (req,res) => {
             name: req.body.name,
             url: req.body.url,
             frontProject:{
-                connect: req.body.frontid
+                connect: req.params.id
             }
         }
     })
