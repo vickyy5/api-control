@@ -20,13 +20,14 @@ enum ROLS {
 }
 
 model User {
-  id       String @id @default(uuid())
+  id       String  @id @default(uuid())
   name     String
   lastname String
-  username String @unique
+  username String  @unique
   password String
-  role     ROLS   @default(Contratante)
+  role     ROLS    @default(Contratante)
   works    Work[]
+  state    Boolean
 }
 
 model Work {
@@ -50,7 +51,7 @@ model Contratist {
 
 model Worker {
   id         String       @id @default(uuid())
-  name       String       
+  name       String
   lastname   String
   role       ROLS
   username   String       @unique
@@ -64,11 +65,24 @@ model FrontProject {
   minutas      String
   estimations  Estimations?
   reportId     String?
-  report       Report?       @relation(fields: [reportId], references: [id])
+  report       Report?      @relation(fields: [reportId], references: [id])
   multimediaId String?
-  multimedia   Multimedia?   @relation(fields: [multimediaId], references: [id])
-  Work         Work?       @relation(fields: [workId], references: [id])
+  multimedia   Multimedia?  @relation(fields: [multimediaId], references: [id])
+  Work         Work?        @relation(fields: [workId], references: [id])
   workId       String?
+  catalogo     Catalogo[]
+}
+
+model Catalogo {
+  id             String       @id @default(uuid())
+  clave          String
+  descrip        String
+  unidad         Int
+  cantidad       Int
+  puni           Float
+  importe        Float
+  FrontProject   FrontProject @relation(fields: [frontProjectId], references: [id])
+  frontProjectId String
 }
 
 model Estimations {
@@ -78,6 +92,64 @@ model Estimations {
   url            String
   frontProjectId String       @unique
   frontProject   FrontProject @relation(fields: [frontProjectId], references: [id])
+}
+
+model caratulaEstim {
+  id                 String        @id @default(uuid())
+  proyecto           String //nombre 
+  dependencia        String
+  descrip            String
+  ncontrato          Int
+  fcontrato          DateTime      @default(now())
+  rsocial            String
+  rfc                String
+  periodo            String
+  nestim             Int
+  formulo            String
+  autorizo           String
+  //importe sin incluir iva
+  importe            Float
+  pimporte           Float
+  importeAcAnterior  Float
+  pimporteAcAnterior Float
+  importeActual      Float
+  pimporteActual     Float
+  importeAcActual    Float
+  pimporteAcActual   Float
+  saldoEstimar       Float
+  psaldoEstimar      Float
+  //del anticipo
+  importeAnticipo    Float
+  pimporteAnticipo   Float
+  importeAmoAcAnt    Float
+  pimporteAmoAcAnt   Float
+  importeAmoAct      Float
+  pimporteAmoAct     Float
+  importeAcAmoAct    Float
+  pimporteAcAmoAct   Float
+  saldoAmortizar     Float
+  psaldoAmortizar    Float
+  //neto a recibir 
+  importeEstim       Float
+  amoAnticipo        Float
+  subtotaln          Float
+  iva                Float
+  retencioni         Float
+  retencionAtra      Float
+  neto               Float
+  resumen            resumenEstim?
+}
+
+model resumenEstim {
+  id         String        @id @default(uuid())
+  testims    Float
+  anticipo   Float
+  subtotal1  Float
+  iva        Float
+  retencion  Float
+  subtotal2  Float
+  caratula   caratulaEstim @relation(fields: [caratulaId], references: [id])
+  caratulaId String        @unique
 }
 
 model Report {

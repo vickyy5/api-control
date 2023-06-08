@@ -1,46 +1,50 @@
-import prisma from "../db";
-import { comparePasswords, createJWT, hashPassword } from "../modules/auth";
+import prisma from '../db';
+import { comparePasswords, createJWT, hashPassword } from '../modules/auth';
+import { body } from 'express-validator';
 
 export const createNewUser = async (req, res) => {
+  try {
     const user = await prisma.user.create({
-        data: {
-            name: req.body.name,
-            lastname: req.body.lastname,
-            username: req.body.username,
-            password: await hashPassword(req.body.password),
-            role: req.body.role
-        }
-    })
-    //agregar manejo de errores jeje
-    //const token = createJWT(user)
-    res.json({token: "Usuario Creado :)"})
-}
+      data: {
+        name: req.body.name,
+        lastname: req.body.lastname,
+        username: req.body.username,
+        password: await hashPassword(req.body.password),
+        role: req.body.role,
+      },
+    });
+    return res.json({ token: 'Usuario Creado :)', user });
+  } catch (error) {
+    return res.json({ error });
+  }
+};
 
+export const pong = async (req, res) => {
+  res.json({ data: 'pong' });
+};
 
-export const pong = async (req,res) => {
-    res.json({data: "pong"})
-}
-
-export const login = async (req,res) => {
+export const login = async (req, res) => {
+  try {
     const user = await prisma.user.findUnique({
-        where: {
-            username: req.body.username
-        }
-    })
-
-
-    try {
-        const isValid = await comparePasswords(req.body.password, user.password)
-        if (!isValid || isValid === null){
-            res.status(401)
-            res.json({message:'Usuario o Contraseña incorrectos'})
-            return      
-        }
-        const token = createJWT(user)    
-        res.json({token: token, data: user})
-    } catch {
-        res.status(401)
-        res.json({message:'Usuario o Contraseña incorrectos'})
-    } 
-
-} 
+      where: {
+        username: req.body.username,
+      },
+    });
+    if (!user)
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    const isValid = await comparePasswords(req.body.password, user.password);
+    if (!isValid || isValid === null) {
+      return res
+        .status(400)
+        .json({ message: 'Usuario o contraseña incorrectos' });
+    }
+    const token = createJWT(user);
+    delete user.password;
+    return res.json({ token: token, user });
+  } catch(error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ message: 'Usuario o contraseña incorrectos' });
+  }
+};
