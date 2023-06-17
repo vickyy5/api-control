@@ -20,14 +20,25 @@ enum ROLS {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  name     String
-  lastname String
-  username String  @unique
-  password String
-  role     ROLS    @default(Contratante)
-  works    Work[]
-  state    Boolean
+  id           String     @id @default(uuid())
+  name         String
+  lastname     String
+  username     String     @unique
+  password     String
+  role         ROLS       @default(Contratante)
+  dependency   Dependecy? @relation(fields: [dependencyId], references: [id])
+  dependencyId String?
+
+  state        Boolean?
+  Contratist   Contratist? @relation(fields: [contratistId], references: [id])
+  contratistId String?
+}
+
+model Dependecy {
+  id    String @id @default(uuid())
+  name  String @unique
+  work  Work[]
+  users User[]
 }
 
 model Work {
@@ -38,24 +49,18 @@ model Work {
   projects          String
   financialProgress Int
   physicalProgress  Int
-  users             User[]
   fronProject       FrontProject[]
+  dependency        Dependecy      @relation(fields: [dependencyId], references: [id])
+  dependencyId      String         @unique
+  Contratist        Contratist?    @relation(fields: [contratistId], references: [id])
+  contratistId      String?
 }
 
 model Contratist {
-  id       String @id @default(uuid())
-  company  String @unique
-  workerId String
-  worker   Worker @relation(fields: [workerId], references: [id])
-}
-
-model Worker {
-  id         String       @id @default(uuid())
-  name       String
-  lastname   String
-  role       ROLS
-  username   String       @unique
-  Contratist Contratist[]
+  id      String @id @default(uuid())
+  company String @unique
+  users   User[]
+  works   Work[]
 }
 
 model FrontProject {
@@ -70,19 +75,27 @@ model FrontProject {
   multimedia   Multimedia?  @relation(fields: [multimediaId], references: [id])
   Work         Work?        @relation(fields: [workId], references: [id])
   workId       String?
-  catalogo     Catalogo[]
+  catalogo     Catalogo?
 }
 
 model Catalogo {
-  id             String       @id @default(uuid())
-  clave          String
-  descrip        String
-  unidad         Int
-  cantidad       Int
-  puni           Float
-  importe        Float
-  FrontProject   FrontProject @relation(fields: [frontProjectId], references: [id])
-  frontProjectId String
+  id      String       @id @default(uuid())
+  name    String
+  descrip String
+  front   FrontProject @relation(fields: [frontId], references: [id])
+  frontId String       @unique
+  concept Concept[]
+}
+
+model Concept {
+  id         String    @id @default(uuid())
+  name       String
+  ref        String
+  cant       Int
+  price      Float
+  total      Float
+  Catalogo   Catalogo? @relation(fields: [catalogoId], references: [id])
+  catalogoId String?
 }
 
 model Estimations {
@@ -95,54 +108,29 @@ model Estimations {
 }
 
 model caratulaEstim {
-  id                 String        @id @default(uuid())
-  proyecto           String //nombre 
-  dependencia        String
-  descrip            String
-  ncontrato          Int
-  fcontrato          DateTime      @default(now())
-  rsocial            String
-  rfc                String
-  periodo            String
-  nestim             Int
-  formulo            String
-  autorizo           String
-  //importe sin incluir iva
-  importe            Float
-  pimporte           Float
-  importeAcAnterior  Float
-  pimporteAcAnterior Float
-  importeActual      Float
-  pimporteActual     Float
-  importeAcActual    Float
-  pimporteAcActual   Float
-  saldoEstimar       Float
-  psaldoEstimar      Float
-  //del anticipo
-  importeAnticipo    Float
-  pimporteAnticipo   Float
-  importeAmoAcAnt    Float
-  pimporteAmoAcAnt   Float
-  importeAmoAct      Float
-  pimporteAmoAct     Float
-  importeAcAmoAct    Float
-  pimporteAcAmoAct   Float
-  saldoAmortizar     Float
-  psaldoAmortizar    Float
-  //neto a recibir 
-  importeEstim       Float
-  amoAnticipo        Float
-  subtotaln          Float
-  iva                Float
-  retencioni         Float
-  retencionAtra      Float
-  neto               Float
-  resumen            resumenEstim?
+  id                  String        @id @default(uuid())
+  resumen             resumenEstim?
+  numEstimacion       Int //x
+  period              Int 
+  formulatedBy        String //c
+  authorizedBy        String //c
+  amount              Float 
+  firstAmount         Float
+  lastAmount          Float
+  actualAmount        Float
+  estimatedBalance    Float
+  estimatedAmount     Float
+  anticipatedAmount   Float
+  subtotal            Float
+  iva                 Float
+  withholodingActual  Float
+  withholdingAnterior Float
+  neto                Float
 }
 
 model resumenEstim {
   id         String        @id @default(uuid())
-  testims    Float
+  testims    Float        
   anticipo   Float
   subtotal1  Float
   iva        Float

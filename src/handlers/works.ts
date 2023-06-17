@@ -57,7 +57,17 @@ export const createWork = async (req,res) => {
             contratist: req.body.contratist,
             projects: req.body.projects,
             financialProgress: req.body.financialProgress,
-            physicalProgress: req.body.physicalProgress
+            physicalProgress: req.body.physicalProgress,
+            dependency:{
+                connect:{
+                    id: req.body.depId
+                }
+            },
+            Contratist:{
+                connect:{
+                    id: req.body.contId
+                }
+            }
         }
     })
     
@@ -68,82 +78,6 @@ export const deleteWork = async (req,res) => {
     const deleted = await prisma.work.delete({
         where:{
             id: req.params.id
-        }
-    })
-
-    res.json({data: deleted})
-}
-
-
-export const addUserToWork = async (req, res) => {
-    const usernames = req.body.users
-
-    const cleanUsernames = usernames.map(x => ({username:`${x}`}))
-
-    console.log(cleanUsernames)
-
-    for(const user of usernames){
-        const usersearch = await prisma.user.findUnique({
-            where:{
-                id: user
-            }
-        })
-    
-        if(!user){
-            res.json(400)
-            res.json({error: `El username: ${user}, no se encontro`})
-            return
-        }
-    }
-
-
-    const added = await prisma.work.update({
-        where:{
-            id: req.params.id,
-        }, data: {
-            users: {
-                connect: cleanUsernames
-            },
-        }, include: {
-            users: true
-        }
-    })
-
-    res.json({data: added})    
-
-}
-
-
-export const deleteUsersWorks = async (req,res) => {
-    const usernames = req.body.users
-
-    const cleanUsernames = usernames.map(x => ({username:`${x}`}))
-
-    console.log(cleanUsernames)
-
-    for(const user of usernames){
-        const usersearch = await prisma.user.findUnique({
-            where:{
-                id: user
-            }
-        })
-        
-        if(!user){
-            res.status(400)
-            res.json({error: `El username: ${user}, no se encontro`})
-            return
-        }
-    }
-
-    const deleted = await prisma.work.update({
-        where:{
-            id: req.params.id,
-        }, data: {
-            users: {
-                disconnect: cleanUsernames
-            },
-        }, include: {
-            users: true
         }
     })
 

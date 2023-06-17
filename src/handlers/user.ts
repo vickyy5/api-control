@@ -11,6 +11,9 @@ export const createNewUser = async (req, res) => {
         username: req.body.username,
         password: await hashPassword(req.body.password),
         role: req.body.role,
+        dependency:{
+          connect: {id : req.body.id}
+        }
       },
     });
     return res.json({ token: 'Usuario Creado :)', user });
