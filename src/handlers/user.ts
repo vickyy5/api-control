@@ -1,7 +1,6 @@
 import { Request } from 'express-validator/src/base';
 import prisma from '../db';
 import { comparePasswords, createJWT, hashPassword } from '../modules/auth';
-import { body } from 'express-validator';
 
 export const createNewUser = async (req, res) => {
   try {
@@ -20,13 +19,13 @@ export const createNewUser = async (req, res) => {
     });
     return res.json({ token: 'Usuario Creado :)', user });
   } catch (error) {
-    return res.json({ error });
+    throw new Error(error)
   }
 };
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({});
     return res.json({ users });
   } catch (error) {
     throw new Error(error);
@@ -48,6 +47,7 @@ export const deleteUser = async (req: Request, res) => {
 
 export const updateUser = async (req: Request, res) => {
   try {
+    if(req.params === undefined) return
     const updateUser = await prisma.user.update({
       where: {
         id: req.params.id
@@ -82,7 +82,7 @@ export const login = async (req, res) => {
         .json({ message: 'Usuario o contraseña incorrectos' });
     }
     const token = createJWT(user);
-    delete user.password;
+    delete user?.password;
     return res.json({ token: token, user });
   } catch (error) {
     console.log(error);
