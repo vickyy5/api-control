@@ -2,7 +2,7 @@ import {Router} from 'express'
 import { body, validationResult } from "express-validator";
 import { deleteEstim } from './handlers/estimation';
 import { createFront, deleteFront, estimToFront, getFronts, getOneFront } from './handlers/fronts';
-import { addFrontWork, addUserToWork, createWork, deleteFrontWork, deleteUsersWorks, deleteWork, getOneWork, getWorks, updateWork } from './handlers/works';
+import { addFrontWork, createWork, deleteFrontWork, deleteWork, getOneWork, getWorks, updateWork } from './handlers/works';
 
 const router = Router()
 
@@ -34,9 +34,6 @@ createWork)
 
 router.delete("/works/:id", deleteWork)
 
-router.put("/works/adduser/:id",addUserToWork)
-
-router.put("/works/deleteuser/:id",deleteUsersWorks)
 
 router.put("/works/addfront/:id", addFrontWork)
 router.put("/works/deletefront/:id", deleteFrontWork)

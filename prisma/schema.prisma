@@ -20,25 +20,27 @@ enum ROLS {
 }
 
 model User {
-  id           String     @id @default(uuid())
-  name         String
-  lastname     String
-  username     String     @unique
-  password     String
-  role         ROLS       @default(Contratante)
-  dependency   Dependecy? @relation(fields: [dependencyId], references: [id])
-  dependencyId String?
-
-  state        Boolean?
-  Contratist   Contratist? @relation(fields: [contratistId], references: [id])
-  contratistId String?
+  id             String        @id @default(uuid())
+  name           String
+  lastname       String
+  username       String        @unique
+  password       String
+  role           ROLS          @default(Contratante)
+  typeDependency String
+  dependency     Dependecy?    @relation(fields: [dependencyId], references: [id])
+  dependencyId   String?
+  state          Boolean?
+  Contratist     Contratist?   @relation(fields: [contratistId], references: [id])
+  contratistId   String?
+  Estimations    Estimations[]
 }
 
 model Dependecy {
-  id    String @id @default(uuid())
-  name  String @unique
-  work  Work[]
-  users User[]
+  id     String @id @default(uuid())
+  name   String @unique
+  sector String
+  work   Work[]
+  users  User[]
 }
 
 model Work {
@@ -59,6 +61,7 @@ model Work {
 model Contratist {
   id      String @id @default(uuid())
   company String @unique
+  sector  String
   users   User[]
   works   Work[]
 }
@@ -99,45 +102,29 @@ model Concept {
 }
 
 model Estimations {
-  id             String       @id @default(uuid())
-  name           String
-  date           DateTime     @default(now())
-  url            String
-  frontProjectId String       @unique
-  frontProject   FrontProject @relation(fields: [frontProjectId], references: [id])
-}
-
-model caratulaEstim {
-  id                  String        @id @default(uuid())
-  resumen             resumenEstim?
-  numEstimacion       Int //x
-  period              Int 
-  formulatedBy        String //c
-  authorizedBy        String //c
-  amount              Float 
-  firstAmount         Float
-  lastAmount          Float
-  actualAmount        Float
-  estimatedBalance    Float
-  estimatedAmount     Float
-  anticipatedAmount   Float
-  subtotal            Float
-  iva                 Float
-  withholodingActual  Float
-  withholdingAnterior Float
-  neto                Float
-}
-
-model resumenEstim {
-  id         String        @id @default(uuid())
-  testims    Float        
-  anticipo   Float
-  subtotal1  Float
-  iva        Float
-  retencion  Float
-  subtotal2  Float
-  caratula   caratulaEstim @relation(fields: [caratulaId], references: [id])
-  caratulaId String        @unique
+  id                String       @id @default(uuid())
+  date              DateTime     @default(now())
+  frontProjectId    String       @unique
+  frontProject      FrontProject @relation(fields: [frontProjectId], references: [id])
+  numEstimation     Int          @default(autoincrement())
+  period            String
+  formulatedById    String
+  formulatedBy      User         @relation(fields: [formulatedById], references: [id])
+  amount            Float
+  firstAmount       Float
+  lastAmount        Float
+  currentAmount     Float
+  estimatedBalance  Float
+  anticipatedAmount Float
+  currentSubtotal   Float
+  currentIva        Float
+  currentTotal      Float
+  testims           Float
+  advance           Float // Anticipo
+  finalSubtotal     Float
+  finalIva          Float
+  finalRetention    Float
+  finalTotal        Float
 }
 
 model Report {

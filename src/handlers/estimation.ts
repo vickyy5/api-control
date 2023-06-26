@@ -1,28 +1,55 @@
-import prisma from "../db";
+import { Request } from 'express-validator/src/base';
+import prisma from '../db';
 
-export const deleteEstim = async (req,res) => {
+export const createEstimation = async (req, res) => {
+  try {
+    const estimation = await prisma.estimations.create({
+      data: {
+        ...req.body
+      }
+    });
+    return res.json({ estimation });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+
+export const deleteEstim = async (req: Request, res) => {
+  try {
     const deleted = await prisma.estimations.delete({
-        where:{
-            id: req.params.id
-        }
-    })
-}
+      where: {
+        id: req.params.id,
+      },
+    });
+    return res.json({ status: true, data: deleted });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
-
-export const getEstims = async (req,res) => {
-    const Estims = await prisma.estimations.findMany({})
-
-    return res.json({data: Estims})
-}
+export const getEstims = async (req: Request, res) => {
+  try {
+    const estimations = await prisma.estimations.findMany({
+      where: {
+        frontProjectId: req.params.id,
+      },
+    });
+    return res.json({ estimations });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
 export const getOneEstim = async (req, res) => {
-    const estim = await prisma.estimations.findUnique({
-        where:{
-            id: req.params.id
-        }
-    })
-
-    return res.json({data: estim})
-}
-
-
+  try {
+    const estimation = await prisma.estimations.findUnique({
+      where: {
+        frontProjectId: req.params.id,
+      },
+    });
+    return res.json({ estimation });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
